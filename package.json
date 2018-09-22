@@ -1,0 +1,19 @@
+{
+  "name": "skype",
+  "version": "1.0.0",
+  "description": "A skype bot experiment",
+  "main": "index.js",
+  "scripts": {
+    "test": "Hello world"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "botbuilder": "^3.15.0",
+    "dotenv-extended": "^2.2.0",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "restify": "^7.2.1"
+  }
+}

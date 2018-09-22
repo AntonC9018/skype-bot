@@ -1,0 +1,55 @@
+{
+  "ids": [
+    {
+      "id": "456c1070-b84e-11e8-9d0f-57814d80974e",
+      "channelId": "emulator",
+      "user": {
+        "id": "default-user",
+        "name": "User"
+      },
+      "conversation": {
+        "id": "b94ad620-b83f-11e8-b1d1-e190d74760a8|livechat"
+      },
+      "bot": {
+        "id": "c1d9eee0-b5ea-11e8-b31e-23605d62d6d7",
+        "name": "Bot",
+        "role": "bot"
+      },
+      "serviceUrl": "http://localhost:55398"
+    },
+    {
+      "id": "a81cee60-bd03-11e8-86cc-853a9e3182b3",
+      "channelId": "emulator",
+      "user": {
+        "id": "default-user",
+        "name": "User"
+      },
+      "conversation": {
+        "id": "22973d30-bcf0-11e8-8f6b-cd25d886c2a6|livechat"
+      },
+      "bot": {
+        "id": "c1d9eee0-b5ea-11e8-b31e-23605d62d6d7",
+        "name": "Bot",
+        "role": "bot"
+      },
+      "serviceUrl": "http://localhost:61233"
+    },
+    {
+      "id": "193bdb40-bdba-11e8-9de0-0d153a7c5b71",
+      "channelId": "emulator",
+      "user": {
+        "id": "default-user",
+        "name": "User"
+      },
+      "conversation": {
+        "id": "c511cfa0-bdb1-11e8-8b05-0da6a5c2de02|livechat"
+      },
+      "bot": {
+        "id": "c1d9eee0-b5ea-11e8-b31e-23605d62d6d7",
+        "name": "Bot",
+        "role": "bot"
+      },
+      "serviceUrl": "http://localhost:59616"
+    }
+  ]
+}
