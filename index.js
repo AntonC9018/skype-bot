@@ -5,11 +5,11 @@ var restify = require('restify');
 var builder = require('botbuilder');
 var express = require('express');
 var fs = require('fs');
+// !!! Most of the bot stuff is basically copy-paste !!!
 
 // Setup Restify Server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function() {
-  //console.log(process);
   console.log('%s listening to %s', server.name, server.url);
 });
 
@@ -25,7 +25,11 @@ server.post('/api/messages', connector.listen());
 // Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
 var bot = new builder.UniversalBot(connector);
 
+// look for an id in the file with addresses and
+// return the address object if found, null — if not
+// If no id is provided, return all ids as an array
 function loadAdds(s) {
+  // create the file if it had been deleted or simply doesn't exist
   if (!fs.existsSync("addresses.json")) {
     fs.writeFileSync('addresses.json', '', function(err) {
       if (err)
@@ -35,32 +39,31 @@ function loadAdds(s) {
   }
   let rawAddresses = fs.readFileSync("addresses.json");
   let a = JSON.parse(rawAddresses);
-  if (Object.keys(a).length === 0) return [];
 
+  if (Object.keys(a).length === 0) return [];
   if (s) {
     for (let i = 0; i < a.ids.length; i++) {
-      if (a.ids[i].conversation.id === s) {
+      if (a.ids[i].conversation.id === s) { // address found!
         return (a.ids[i]);
       }
     }
     return null;
   }
+  // no id provided
   let ads = [];
   for (let i = 0; i < a.ids.length; i++) {
-    ads.push(a.ids[i])
+    ads.push(a.ids[i]);
   }
   return ads;
 }
 // root dialog
 bot.dialog('/', function(session, args) {
-
   let address = session.message.address;
 
   var message = 'This is a test';
   session.send(message);
 
-  pushAddress(address);
-
+  pushAddress(address); // save the address
 });
 
 function sendMessage(text, address) {
@@ -74,15 +77,21 @@ function sendMessage(text, address) {
   msg.textLocale('en-US');
   bot.send(msg);
 }
-function pushAddress(address) {
 
-  let adds = loadAdds();
+// Save or renew an address in the json with addresses
+function pushAddress(address) {
+  let adds = loadAdds(); // get all addresses
   if (adds.length != 0) {
     for (let i = adds.length - 1; i >= 0; i--) {
-      if (adds[i].conversation.id === address.conversation.id) adds.splice(i, 1);
+      if (adds[i].conversation.id === address.conversation.id) {
+        adds.splice(i, 1); // if an id match found, renew the address object
+      }
     }
   }
+  // add a new address / renew the former
   adds.push(address);
+
+  // save the changes if any
   let t = {
     ids: adds
   };
@@ -91,7 +100,6 @@ function pushAddress(address) {
     if (err)
       throw err;
   });
-
 }
 /*
    _____  _____ _    _ ______ _____  _    _ _      ______
@@ -111,13 +119,17 @@ var toDo = [];
 var countDown;
 var timeouts = [];
 
+// set the timeouts, schedule sending of messages
+// return contents of file with scheduled text and time
 function set() {
+  // clear off former values
   now = Date.now();
   toDo = [];
   countDown = null;
   timeouts.map(el => clearTimeout(el));
   timeouts = [];
 
+  // get "texts" of messages and time
   let temp = fs.readFileSync("sched.json");
   let d = JSON.parse(temp);
   countDown = Array(d.items.length);
@@ -148,6 +160,8 @@ function set() {
   }
   return d;
 }
+
+// invoke the function at the start
 set();
 
 app.use(express.static(__dirname + '/public'));
@@ -160,15 +174,17 @@ app.use(bodyParser.urlencoded({
 // parse application/json
 app.use(bodyParser.json())
 
+// send data to client
 app.get('/getData', function(req, res) {
-  console.log("Sending data to remote")
+  console.log("Sending data to client");
   let d = {};
-  if (countDown) {
+  if (countDown) { // check if intervals are set
     let temp = fs.readFileSync("sched.json");
     d = JSON.parse(temp);
-  } else {
+  } else { // set them up otherwise
     d = set();
   }
+  // send in the data
   res.writeHead(200, {
     'Content-Type': 'text/plain'
   });
@@ -177,6 +193,8 @@ app.get('/getData', function(req, res) {
   }
   res.end('_testcb(' + JSON.stringify(d) + ')');
 });
+
+// apply changes. Renew schedule (file with texts and time)
 app.post('/reload', function(req, res) {
   let newSched = {
     items: req.body.it
@@ -185,5 +203,5 @@ app.post('/reload', function(req, res) {
     console.log(err);
   });
   console.log("Sucessfully received data from remote");
-  set();
+  set(); // reset the timers to updated parameters
 });

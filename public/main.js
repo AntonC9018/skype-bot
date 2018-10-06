@@ -2,7 +2,7 @@ var start = Date.now();
 var rawCounts = [];
 
 $(document).ready(function() {
-  aj();
+  aj(); // loads scheduled messages from the server
   $("<button/>")
     .addClass("btn first")
     .html("Refresh")
@@ -14,17 +14,22 @@ $(document).ready(function() {
     .click(postToServer)
     .appendTo($("body"));
   $(window).click(softlyRemoveInputs);
-
 });
 
-var round = Math.round;
-var interv;
+var round = Math.round; // shorthand for convenience
+var interv; // Interval
+
+// refresh the list of scheduled messages
 function aj2() {
-  $(".gened").remove();
+  $(".gened").remove(); // delete generated rows
+  // the "start" time is going to be renewed
+  // so the interval must be renewed too
   clearInterval(interv);
   rawCounts = [];
-  aj();
+  aj(); // same ajax call as at the start
 }
+
+// get data from the server
 function aj() {
   start = Date.now();
   $.ajax({
@@ -35,12 +40,6 @@ function aj() {
     timeout: 5000,
     success: function(data) {
       let t = data.items;
-
-
-      // for (let i = 0; i < data.texts.length; i++) {
-      //   temp.push([data.texts[i], data.times[i], data.countDown[i]]);
-      // }
-
 
       t.sort((a, b) => {
         if (a[4] < b[4]) {
@@ -53,33 +52,33 @@ function aj() {
         return 0;
       });
 
-
-
       let table = $("#schedule");
       for (let i = 0; i < t.length; i++) {
-        let tr = $("<tr/>").addClass("gened");
+        let tr = $("<tr/>").addClass("gened"); // add a row
+        // add items to the row
         tr.append($('<td class="texts chble">' + t[i][0] + "</td>"));
         tr.append($('<td class="address chble">' + t[i][3] + "</td>"));
         tr.append($('<td class="time-left">'));
         tr.append($('<td class="scheduled chble">' + t[i][1] + ':' + t[i][2] + "</td>"));
         tr.appendTo(table);
-        rawCounts.push(t[i][4]);
+        rawCounts.push(t[i][4]); // register how much time left
       }
-      doStuff();
-      count();
-      setDinInputs();
+      displayTimeLeft();
+      tick(); // start time-left changer
+      setDinamInputs();
     },
     error: function(jqXHR, textStatus, errorThrown) {
       alert('error ' + textStatus + " " + errorThrown);
     }
   });
 }
-function count() {
+// start changing time left every second
+function tick() {
   interv = setInterval(function() {
-    doStuff();
+    displayTimeLeft();
   }, 1000);
 }
-function doStuff() {
+function displayTimeLeft() {
   let d = (Date.now() - start);
   $(".time-left").each(function(index) {
     let text = '';
@@ -90,17 +89,6 @@ function doStuff() {
 
     let date = new Date(expr);
     date.setHours(date.getHours() - 2);
-
-    // let secs = expr % 60;
-    // expr -= secs;
-    // let mins = expr % 3600 / 60;
-    // expr -= mins;
-    // let hrs = round(expr / 60 / 60) - 1;
-    //
-    //
-    // text = (((hrs <= 0) ? '' : hrs + ':') +
-    // ((mins <= 0 && hrs <= 0) ? '' : ((mins < 10) ? '0' + mins : mins) + ':') +
-    // ((secs < 10) ? '0' + secs : secs));
 
     text = date.toTimeString().substring(0, 8).trim();
     $(this).html(text);
@@ -136,24 +124,33 @@ function postToServer() {
     contentType: "application/json"
   });
 }
-function setDinInputs() {
+// turn table cell into an iput field and let user modify it
+function setDinamInputs() {
   gened = $(".gened td").not(".time-left");
-  $.each(gened, function() {
+
+  $.each(gened, function() { // get all cells
     let data = jQuery._data(this, 'events');
-    if (!data) {
+    if (!data) { // if it doesn't have a listener already
       $(this).click(function(e) {
         e.stopPropagation();
         let t = $(this);
+
+        // no need to turn it into an input, it already is one!
         if (t.find(".din-input").length != 0) return;
+
+        // remove all other inputs
         softlyRemoveInputs();
+
         val = t.html();
         t.html("");
         t.css("padding", "0 0 0 7px");
         t.append($("<input>")
-          .val(val)
+          .val(val) // assign input this cell's value
+          // css stuff
           .addClass("din-input")
           .css("width", (val.length + 1) * 8 + 'px')
-          .css("backgroundColor", window.getComputedStyle(t[0], null).getPropertyValue('background-color'))
+          .css("backgroundColor", window.getComputedStyle(t[0], null)
+            .getPropertyValue('background-color'))
           .on("input", function() {
             $(this).css("width", ($(this).val().length + 1) * 8 + 'px');
           })
@@ -162,8 +159,9 @@ function setDinInputs() {
       })
     }
   })
-
 }
+// turn inputs back into normal cells
+// i.e. remove them, and assign their values to cells
 function softlyRemoveInputs() {
   let el = $(".din-input");
   let par = el.parent();
