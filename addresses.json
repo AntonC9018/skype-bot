@@ -50,6 +50,23 @@
         "role": "bot"
       },
       "serviceUrl": "http://localhost:59616"
+    },
+    {
+      "id": "ef0cdbc0-cb11-11e8-a348-850bb5ca9dbd",
+      "channelId": "emulator",
+      "user": {
+        "id": "default-user",
+        "name": "User"
+      },
+      "conversation": {
+        "id": "98a5f0c0-cb0f-11e8-a1ce-09a7d0fc7013|livechat"
+      },
+      "bot": {
+        "id": "8c8fc360-cb0f-11e8-a1ce-09a7d0fc7013",
+        "name": "Bot",
+        "role": "bot"
+      },
+      "serviceUrl": "http://localhost:51550"
     }
   ]
 }

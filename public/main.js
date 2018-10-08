@@ -14,6 +14,10 @@ $(document).ready(function() {
     .click(postToServer)
     .appendTo($("body"));
   $(window).click(softlyRemoveInputs);
+  $(".adds")
+    .click(function() {
+      window.open('addresses');
+    });
 });
 
 var round = Math.round; // shorthand for convenience

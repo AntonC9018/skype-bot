@@ -1,0 +1,18 @@
+{
+    "name": "skype",
+    "description": "",
+    "services": [
+        {
+            "type": "endpoint",
+            "appId": "",
+            "appPassword": "",
+            "endpoint": "http://localhost:3978/api/messages",
+            "id": "8c8fc360-cb0f-11e8-a1ce-09a7d0fc7013",
+            "name": "http://localhost:3978/api/messages"
+        }
+    ],
+    "secretKey": "",
+    "version": "2.0",
+    "overrides": null,
+    "path": "D:\\Java\\js\\skype-bot\\skype.bot"
+}
